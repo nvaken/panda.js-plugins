@@ -7,8 +7,6 @@ game.module(
 )
 .body(function() {
 
-game.ua.mobile = true;
-
 if(game.ua.mobile) {
     game.addAsset('media/yleloader/stampla.png');
     game.addAsset('media/yleloader/badge.png');
@@ -89,6 +87,5 @@ game.Loader.inject({
 });
 
 game.Loader.touchToStart = true;
-game.Loader.timeout = 2.0;
 
 });
