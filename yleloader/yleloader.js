@@ -7,9 +7,12 @@ game.module(
 )
 .body(function() {
 
+game.ua.mobile = true;
+
 if(game.ua.mobile) {
+    game.addAsset('media/yleloader/stampla.png');
     game.addAsset('media/yleloader/badge.png');
-    game.addAsset('media/yleloader/button.png');    
+    game.addAsset('media/yleloader/button.png');
 }
 
 game.Loader.inject({
@@ -39,6 +42,13 @@ game.Loader.inject({
 
         this.text.visible = this.symbol.visible = false;
         
+        var stampla = new game.Sprite(game.system.width / 2 + 90, game.system.height / 2 + 50, 'media/yleloader/stampla.png', {
+            anchor: {x:0.5, y:1.0},
+            scale: {x:0, y:0},
+            rotation: -1
+        });
+        game.system.stage.addChild(stampla);
+
         var sprite = new game.Sprite(game.system.width/2, game.system.height/2, 'media/yleloader/badge.png', {
             anchor: {x:0.5, y:0.5},
             scale: {x:0, y:0}
@@ -49,20 +59,25 @@ game.Loader.inject({
             anchor: {x:0.5, y:0.5},
             interactive: true,
             buttonMode: true,
-            click: this.unlock.bind(this)
+            click: this.unlock.bind(this),
+            rotation: -0.1
         });
         sprite.addChild(button);
 
         var tween;
-        tween = new game.Tween(button.scale, {x:1.05, y:1.05}, 1, {easing: game.Tween.Easing.Quadratic.InOut, loop: game.Tween.Loop.Reverse});
+        tween = new game.Tween(button, {rotation: 0.1}, 1, {easing: game.Tween.Easing.Quadratic.InOut, loop: game.Tween.Loop.Reverse});
         tween.start();
         this.tweens.push(tween);
 
-        tween = new game.Tween(sprite.scale, {x:1, y:1}, 0.3, {delay: 0.3, easing: game.Tween.Easing.Back.Out});
+        tween = new game.Tween(sprite.scale, {x:0.8, y:0.8}, 0.3, {delay: 0.3, easing: game.Tween.Easing.Back.Out});
         tween.start();
         this.tweens.push(tween);
 
         tween = new game.Tween(this.logo.scale, {x:0, y:0}, 0.3, {easing: game.Tween.Easing.Back.In});
+        tween.start();
+        this.tweens.push(tween);
+
+        tween = new game.Tween(stampla, {scale: {x:1.5, y:1.5}, rotation: 0.5}, 0.5, {delay: 0.5, easing: game.Tween.Easing.Back.Out});
         tween.start();
         this.tweens.push(tween);
     },
@@ -74,6 +89,6 @@ game.Loader.inject({
 });
 
 game.Loader.touchToStart = true;
-game.Loader.timeout = 1.0;
+game.Loader.timeout = 2.0;
 
 });
