@@ -39,13 +39,6 @@ game.Loader.inject({
         if(!game.ua.mobile || !game.Loader.touchToStart) return this.end();
 
         this.text.visible = this.symbol.visible = false;
-        
-        var stampla = new game.Sprite(game.system.width / 2 + 90, game.system.height / 2 + 50, 'media/yleloader/stampla.png', {
-            anchor: {x:0.5, y:1.0},
-            scale: {x:0, y:0},
-            rotation: -1
-        });
-        game.system.stage.addChild(stampla);
 
         var sprite = new game.Sprite(game.system.width/2, game.system.height/2, 'media/yleloader/badge.png', {
             anchor: {x:0.5, y:0.5},
@@ -53,7 +46,7 @@ game.Loader.inject({
         });
         game.system.stage.addChild(sprite);
 
-        var button = new game.Sprite(sprite.width/2, sprite.height/2, 'media/yleloader/button.png', {
+        var button = new game.Sprite(sprite.width/2, sprite.height/2 + 200, 'media/yleloader/button.png', {
             anchor: {x:0.5, y:0.5},
             interactive: true,
             buttonMode: true,
@@ -72,10 +65,6 @@ game.Loader.inject({
         this.tweens.push(tween);
 
         tween = new game.Tween(this.logo.scale, {x:0, y:0}, 0.3, {easing: game.Tween.Easing.Back.In});
-        tween.start();
-        this.tweens.push(tween);
-
-        tween = new game.Tween(stampla, {scale: {x:1.5, y:1.5}, rotation: 0.5}, 0.5, {delay: 0.5, easing: game.Tween.Easing.Back.Out});
         tween.start();
         this.tweens.push(tween);
     },
