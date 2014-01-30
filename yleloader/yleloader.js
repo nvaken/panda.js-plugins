@@ -8,7 +8,6 @@ game.module(
 .body(function() {
 
 if(game.ua.mobile) {
-    game.addAsset('media/yleloader/stampla.png');
     game.addAsset('media/yleloader/badge.png');
     game.addAsset('media/yleloader/button.png');
 }
@@ -75,6 +74,6 @@ game.Loader.inject({
     }
 });
 
-game.Loader.touchToStart = true;
+game.Loader.touchToStart = false;
 
 });
