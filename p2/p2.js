@@ -26,7 +26,7 @@ game.module(
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-(function(e){if("function"==typeof bootstrap)bootstrap("p2",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeP2=e}else"undefined"!=typeof window?game.p2=e():self.p2=e()})(function(){var define,ses,bootstrap,module,exports;
+(function(e){if("function"==typeof bootstrap)bootstrap("p2",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeP2=e}else"undefined"!=typeof window?window.p2=e():self.p2=e()})(function(){var define,ses,bootstrap,module,exports;
 return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 // Export p2 classes
 module.exports = {
@@ -4245,8 +4245,7 @@ var step_r = vec2.create(),
  *     var world = new World();
  *     world.step(0.01);
  */
-World.prototype.update = function(dt,timeSinceLastCalled,maxSubSteps){
-    dt = dt || game.system.delta;
+World.prototype.step = function(dt,timeSinceLastCalled,maxSubSteps){
     maxSubSteps = maxSubSteps || 10;
     timeSinceLastCalled = timeSinceLastCalled || 0;
 
@@ -10347,9 +10346,14 @@ Line.segmentsIntersect = function(p1, p2, q1, q2){
 });
 ;
 
-game.World = game.p2.World;
-game.Body = game.p2.Body;
-game.Circle = game.p2.Circle;
-game.Plane = game.p2.Plane;
+game.World = p2.World;
+game.Body = p2.Body;
+game.Circle = p2.Circle;
+game.Plane = p2.Plane;
+game.Rectangle = p2.Rectangle;
+
+game.World.prototype.update = function() {
+    this.step(game.system.delta);
+};
 
 });
