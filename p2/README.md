@@ -1,6 +1,6 @@
 ## p2.js plugin for Panda.js
 
-[p2.js](https://github.com/schteppe/p2.js) 2D rigid body physics engine written in JavaScript.
+[p2.js](https://github.com/schteppe/p2.js) is 2D rigid body physics engine written in JavaScript.
 
 ### Install
 
