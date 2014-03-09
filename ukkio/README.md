@@ -1,5 +1,9 @@
 ## Ukkio plugin for Panda.js
 
+### Install
+
+Copy `ukkio.json` to your game's root folder and `ukkio.js` into `src/plugins/` folder.
+
 ### Usage
 
     game.module(
