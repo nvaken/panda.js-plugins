@@ -15,10 +15,15 @@ game.WebSocket = game.Class.extend({
         port = port || game.WebSocket.port;
 
         this.connection = new WebSocket('ws://' + host + ':' + port + '/');
+        this.connection.binaryType = game.WebSocket.binaryType;
         this.connection.onopen = this.open.bind(this);
         this.connection.onclose = this.close.bind(this);
         this.connection.onmessage = this.message.bind(this);
         this.connection.onerror = this.error.bind(this);
+    },
+
+    send: function(data) {
+        this.connection.send(data);
     },
 
     open: function() {
@@ -40,6 +45,7 @@ game.WebSocket = game.Class.extend({
 
 game.WebSocket.host = '';
 game.WebSocket.port = '';
+game.WebSocket.binaryType = 'arraybuffer';
 
 game.plugins.websocket = game.WebSocket;
 

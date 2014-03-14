@@ -19,10 +19,20 @@ Copy `websocket.js` into `src/plugins/` folder.
         init: function() {
             game.websocket.open = function() {
                 console.log('Connection opened');
+
+                // Sending binary data
+                var data = new Uint8Array([0,0,2]);
+                game.websocket.send(data);
             };
 
             game.websocket.message = function(message) {
-                console.log('Received: ' + message.data);
+                if(message.data instanceof ArrayBuffer) {
+                    console.log('Received binary');
+                    var data = new Uint8Array(message.data);
+                    console.log(data);
+                } else {
+                    console.log('Received message ' + message.data);
+                }
             };
 
             game.websocket.connect('localhost', 8080);
