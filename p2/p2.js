@@ -10346,11 +10346,16 @@ Line.segmentsIntersect = function(p1, p2, q1, q2){
 });
 ;
 
+// Panda.js
+
 game.World = p2.World;
 game.Body = p2.Body;
 game.Circle = p2.Circle;
 game.Plane = p2.Plane;
 game.Rectangle = p2.Rectangle;
+game.Material = p2.Material;
+game.ContactMaterial = p2.ContactMaterial;
+game.DistanceConstraint = p2.DistanceConstraint;
 
 game.World.prototype.update = function() {
     this.step(game.system.delta);
