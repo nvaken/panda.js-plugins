@@ -12,7 +12,8 @@ game.WebSocket = game.Class.extend({
 
     connect: function(host) {
         host = host || game.WebSocket.host;
-        if(!host) throw('Host not defined');
+        if(!host) throw('WebSocket host not defined');
+        if(typeof(window.WebSocket) !== 'function') throw('WebSocket not supported');
 
         this.connection = new WebSocket(host);
         this.connection.binaryType = game.WebSocket.binaryType;
