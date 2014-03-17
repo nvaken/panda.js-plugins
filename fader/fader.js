@@ -6,6 +6,7 @@ game.module(
 game.Fader = game.Class.extend({
     speed: 500,
     color: 0x000000,
+    fading: false,
     sprite: null,
     callback: null,
 
@@ -28,6 +29,8 @@ game.Fader = game.Class.extend({
         tween.to({alpha: 0}, this.speed);
         tween.onComplete(this.fadeComplete.bind(this, true));
         tween.start();
+
+        this.fading = true;
     },
 
     fadeOut: function(callback) {
@@ -41,9 +44,12 @@ game.Fader = game.Class.extend({
         tween.to({alpha: 1}, this.speed);
         tween.onComplete(this.fadeComplete.bind(this));
         tween.start();
+
+        this.fading = true;
     },
 
     fadeComplete: function(remove) {
+        this.fading = false;
         if(typeof(this.callback) === 'function') this.callback();
         if(remove) game.system.stage.removeChild(this.sprite);
     }
