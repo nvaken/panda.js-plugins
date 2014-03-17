@@ -17,25 +17,27 @@ Copy `websocket.js` into `src/plugins/` folder.
 
     SceneGame = game.Scene.extend({
         init: function() {
-            game.websocket.open = function() {
-                console.log('Connection opened');
-
-                // Sending binary data
-                var data = new Uint8Array([0,0,2]);
-                game.websocket.send(data);
-            };
-
-            game.websocket.message = function(message) {
-                if(message.data instanceof ArrayBuffer) {
-                    console.log('Received binary');
-                    var data = new Uint8Array(message.data);
-                    console.log(data);
-                } else {
-                    console.log('Received message ' + message.data);
-                }
-            };
-
+            game.websocket.open = this.socketOpen.bind(this);
+            game.websocket.message = this.socketMessage.bind(this);
             game.websocket.connect('localhost', 8080);
+        },
+
+        socketOpen: function() {
+            console.log('Connection opened');
+
+            // Send binary data
+            var data = new Uint8Array([0,0,2]);
+            game.websocket.send(data);
+        },
+
+        socketMessage: function(message) {
+            if(message.data instanceof ArrayBuffer) {
+                // Receive binary data
+                var data = new Uint8Array(message.data);
+                console.log(data);
+            } else {
+                console.log('Received message ' + message.data);
+            }
         }
     });
 
