@@ -22,24 +22,24 @@ game.WebSocket = game.Class.extend({
         this.connection.onerror = this.error.bind(this);
     },
 
+    connected: function() {
+        return (this.connection.readyState === this.connection.OPEN);
+    },
+
     send: function(data) {
-        this.connection.send(data);
+        if(this.connected()) this.connection.send(data);
     },
 
     open: function() {
-        // Connection opened
     },
 
     close: function() {
-        // Connection closed
     },
 
-    message: function(message) {
-        // Message received
+    message: function() {
     },
 
-    error: function(error) {
-        throw('Error connecting to ' + error.target.url);
+    error: function() {
     }
 });
 
