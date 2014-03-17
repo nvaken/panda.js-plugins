@@ -1,25 +1,18 @@
 ## WebSocket plugin for Panda.js
 
+Use WebSocket for multiplayer games on Panda.js
+
 ### Install
 
 Copy `websocket.js` into `src/plugins/` folder.
 
-### Usage
-
-    game.module(
-        'game.main'
-    )
-    .require(
-        'engine.core',
-        'plugins.websocket'
-    )
-    .body(function() {
+### Example
 
     SceneGame = game.Scene.extend({
         init: function() {
             game.websocket.open = this.socketOpen.bind(this);
             game.websocket.message = this.socketMessage.bind(this);
-            game.websocket.connect('localhost', 8080);
+            game.websocket.connect('ws://localhost:8080');
         },
 
         socketOpen: function() {
@@ -39,8 +32,4 @@ Copy `websocket.js` into `src/plugins/` folder.
                 console.log('Received message ' + message.data);
             }
         }
-    });
-
-    game.start();
-
     });
