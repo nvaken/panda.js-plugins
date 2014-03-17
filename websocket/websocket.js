@@ -10,11 +10,11 @@ game.WebSocket = game.Class.extend({
         game.websocket = this;
     },
 
-    connect: function(host, port) {
+    connect: function(host) {
         host = host || game.WebSocket.host;
-        port = port || game.WebSocket.port;
+        if(!host) throw('Host not defined');
 
-        this.connection = new WebSocket('ws://' + host + ':' + port + '/');
+        this.connection = new WebSocket(host);
         this.connection.binaryType = game.WebSocket.binaryType;
         this.connection.onopen = this.open.bind(this);
         this.connection.onclose = this.close.bind(this);
@@ -39,12 +39,11 @@ game.WebSocket = game.Class.extend({
     },
 
     error: function(error) {
-        throw(error);
+        throw('Error connecting to ' + error.target.url);
     }
 });
 
 game.WebSocket.host = '';
-game.WebSocket.port = '';
 game.WebSocket.binaryType = 'arraybuffer';
 
 game.plugins.websocket = game.WebSocket;
