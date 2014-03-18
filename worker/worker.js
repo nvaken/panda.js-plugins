@@ -5,26 +5,24 @@ game.module(
     
 game.Worker = game.Class.extend({
     worker: null,
-    callback: null,
 
     init: function(file) {
-        if(!window.Worker) throw('WebWorker not supported');
+        if(!window.Worker) throw('Web Worker not supported');
 
         this.worker = new Worker(file);
     },
 
     onMessage: function(callback) {
-        if(!this.worker) return;
-
-        if(this.callback) this.worker.removeEventListener('message', this.callback, false);
-        this.callback = callback;
-        this.worker.addEventListener('message', this.callback, false);
+        this.worker.onmessage = callback;
+        return this;
     },
 
     send: function(data) {
-        if(!this.worker) return;
-
         this.worker.postMessage(data);
+    },
+
+    stop: function() {
+        this.worker.terminate();
     }
 });
 
