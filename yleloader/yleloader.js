@@ -68,6 +68,12 @@ game.Loader.inject({
         tween.start();
     },
 
+    onPercentChange: function() {
+        this.text.setText(this.percent+'%');
+        this.text.updateTransform();
+        this.text.position.x = game.system.width / 2 - this.text.width / 2;
+    },
+
     unlock: function() {
         if(game.audio) {
             if(game.audio.context) {
