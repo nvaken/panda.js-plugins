@@ -6,7 +6,7 @@
 
 Copy `p2.js` into `src/plugins/` folder.
 
-### Usage
+### Example
 
     game.module(
         'game.main'
@@ -17,66 +17,76 @@ Copy `p2.js` into `src/plugins/` folder.
     )
     .body(function() {
 
-    Box = game.Class.extend({
-        init: function() {
+    PhysicsObject = game.Class.extend({
+        size: 64,
+
+        init: function(x, y) {
             // Add body and shape
-            var boxShape = new game.Rectangle(2,1);
-            this.boxBody = new game.Body({
+            var shape = Math.random() > 0.5 ?
+                new game.Circle(this.size / 2 / game.scene.world.ratio) :
+                new game.Rectangle(this.size / game.scene.world.ratio, this.size / game.scene.world.ratio);
+
+            this.body = new game.Body({
                 mass: 1,
                 position: [
-                    // Center on stage
-                    game.system.width / 2 / game.scene.zoom,
-                    game.system.height / 2 / game.scene.zoom
+                    x / game.scene.world.ratio,
+                    y / game.scene.world.ratio
                 ],
                 angularVelocity: 1
             });
-            this.boxBody.addShape(boxShape);
+            this.body.addShape(shape);
 
-            // Add graphics
-            this.graphics = new PIXI.Graphics();
-            this.graphics.lineStyle(2 / game.scene.zoom, 0x000000);
-            this.graphics.beginFill(0xff0000);
-            this.graphics.drawRect(-boxShape.width / 2, -boxShape.height / 2, boxShape.width, boxShape.height);
+            // Apply velocity
+            var force = 5;
+            var angle = Math.random() * Math.PI * 2;
+            this.body.velocity[0] = Math.sin(angle) * force;
+            this.body.velocity[1] = Math.cos(angle) * force;
 
-            this.update();
-            game.scene.world.addBody(this.boxBody);
-            game.scene.container.addChild(this.graphics);
+            game.scene.world.addBody(this.body);
+            game.scene.addTimer(5000, this.remove.bind(this));
         },
 
-        update: function() {
-            this.graphics.position.x = this.boxBody.position[0];
-            this.graphics.position.y = this.boxBody.position[1];
-            this.graphics.rotation = this.boxBody.angle;
+        remove: function() {
+            game.scene.world.removeBody(this.body);
         }
     });
 
     SceneGame = game.Scene.extend({
         backgroundColor: 0x808080,
-        zoom: 50,
 
         init: function() {
-            // Add container
-            this.container = new game.Container();
-            this.container.position.x = 0;
-            this.container.position.y = game.system.height;
-            this.container.scale.x = this.zoom;
-            this.container.scale.y = -this.zoom; // Flip container
-            this.stage.addChild(this.container);
-
             // Init world
-            this.world = new game.World();
+            this.world = new game.World({gravity: [0, 9]});
+            this.world.ratio = 100;
 
-            // Add plane
-            var planeShape = new game.Plane();
-            var planeBody = new game.Body({
-                position: [0, 0]
+            // Add walls
+            var wallShape, wallBody;
+
+            wallShape = new game.Rectangle(50 / this.world.ratio, game.system.height * 2 / this.world.ratio);
+            wallBody = new game.Body({
+                position: [0, game.system.height / 2 / this.world.ratio]
             });
-            planeBody.addShape(planeShape);
-            this.world.addBody(planeBody);
+            wallBody.addShape(wallShape);
+            this.world.addBody(wallBody);
 
-            // Add box
-            var box = new Box();
-            this.addObject(box);
+            wallShape = new game.Rectangle(50 / this.world.ratio, game.system.height * 2 / this.world.ratio);
+            wallBody = new game.Body({
+                position: [game.system.width / this.world.ratio, game.system.height / 2 / this.world.ratio]
+            });
+            wallBody.addShape(wallShape);
+            this.world.addBody(wallBody);
+
+            wallShape = new game.Rectangle(game.system.width / this.world.ratio, 50 / this.world.ratio);
+            wallBody = new game.Body({
+                position: [game.system.width / 2 / this.world.ratio, game.system.height / this.world.ratio]
+            });
+            wallBody.addShape(wallShape);
+            this.world.addBody(wallBody);
+
+            this.addTimer(200, function() {
+                var object = new PhysicsObject(game.system.width / 2, game.system.height / 2);
+                game.scene.addObject(object);
+            }, true);
         }
     });
 
