@@ -1,6 +1,9 @@
 game.module(
     'plugins.p2'
 )
+.require(
+    'engine.debug'
+)
 .body(function() {
     
 /**
@@ -10360,5 +10363,64 @@ game.DistanceConstraint = p2.DistanceConstraint;
 game.World.prototype.update = function() {
     this.step(game.system.delta);
 };
+
+game.World.prototype.addBody = function(body){
+    if(body.world) throw new Error("This body is already added to a World.");
+
+    this.bodies.push(body);
+    body.world = this;
+    this.addBodyEvent.body = body;
+    this.emit(this.addBodyEvent);
+
+    if(game.debugDraw && body.shapes.length > 0) game.debugDraw.addP2Body(body);
+};
+
+game.DebugDraw.inject({
+    addP2Body: function(body) {
+        var sprite = new game.Graphics();
+        this.drawP2DebugSprite(sprite, body);
+
+        sprite.position.x = body.position[0] * game.scene.world.ratio;
+        sprite.position.y = body.position[1] * game.scene.world.ratio;
+        sprite.target = body;
+        sprite.alpha = game.DebugDraw.shapeAlpha;
+        this.container.addChild(sprite);
+    },
+
+    drawP2DebugSprite: function(sprite, body) {
+        sprite.clear();
+        sprite.beginFill(game.DebugDraw.shapeColor);
+
+        if(body.shapes[0] instanceof game.Rectangle) {
+            sprite.drawRect(-body.shapes[0].width/2 * game.scene.world.ratio, -body.shapes[0].height/2 * game.scene.world.ratio, body.shapes[0].width * game.scene.world.ratio, body.shapes[0].height * game.scene.world.ratio);
+            sprite.width = body.shapes[0].width * game.scene.world.ratio;
+            sprite.height = body.shapes[0].height * game.scene.world.ratio;
+        }
+        if(body.shapes[0] instanceof game.Circle) {
+            sprite.drawCircle(0, 0, body.shapes[0].radius * game.scene.world.ratio);
+            sprite.radius = body.shapes[0].radius * game.scene.world.ratio;
+        }
+    },
+
+    updateP2: function(sprite) {
+        if(sprite.radius !== 0) {
+            // Circle
+            if(sprite.radius > 0 && sprite.radius !== sprite.target.shapes[0].radius * game.scene.world.ratio) {
+                this.drawDebugSprite(sprite, sprite.target);
+            }
+        } else {
+            // Rectangle
+            if(sprite.width !== sprite.target.shapes[0].width * game.scene.world.ratio ||
+                sprite.height !== sprite.target.shapes[0].height * game.scene.world.ratio) {
+                this.drawDebugSprite(sprite, sprite.target);
+            }
+        }
+
+        sprite.rotation = sprite.target.angle;
+        sprite.position.x = sprite.target.position[0] * game.scene.world.ratio + game.scene.stage.position.x;
+        sprite.position.y = sprite.target.position[1] * game.scene.world.ratio + game.scene.stage.position.y;
+        if(!sprite.target.world) this.container.removeChild(sprite);
+    }
+});
 
 });
