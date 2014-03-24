@@ -19,7 +19,7 @@ game.Fader = game.Class.extend({
     },
 
     fadeIn: function(callback) {
-        game.TweenEngine.stopAllForObject(this.sprite);
+        game.tweenEngine.stopTweensForObject(this.sprite);
 
         this.callback = callback;
         if(this.sprite.alpha === 0) this.sprite.alpha = 1;
@@ -34,7 +34,7 @@ game.Fader = game.Class.extend({
     },
 
     fadeOut: function(callback) {
-        game.TweenEngine.stopAllForObject(this.sprite);
+        game.tweenEngine.stopTweensForObject(this.sprite);
 
         this.callback = callback;
         if(this.sprite.alpha === 1) this.sprite.alpha = 0;
