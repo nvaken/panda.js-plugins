@@ -7,8 +7,8 @@ game.module(
 .body(function() {
 
 if(game.device.mobile) {
-    game.addAsset('media/yleloader/badge.png');
-    game.addAsset('media/yleloader/button.png');
+    game.addAsset('yleloader/badge.png');
+    game.addAsset('yleloader/button.png');
 }
 
 game.Loader.inject({
@@ -42,13 +42,13 @@ game.Loader.inject({
 
         this.text.visible = this.symbol.visible = false;
 
-        var sprite = new game.Sprite(game.system.width/2, game.system.height/2, 'media/yleloader/badge.png', {
+        var sprite = new game.Sprite(game.system.width/2, game.system.height/2, 'yleloader/badge.png', {
             anchor: {x:0.5, y:0.5},
             scale: {x:0, y:0}
         });
         game.system.stage.addChild(sprite);
 
-        var button = new game.Sprite(sprite.width/2, sprite.height/2 + 200, 'media/yleloader/button.png', {
+        var button = new game.Sprite(sprite.width/2, sprite.height/2 + 200, 'yleloader/button.png', {
             anchor: {x:0.5, y:0.5},
             interactive: true,
             buttonMode: true,
@@ -89,6 +89,6 @@ game.Loader.inject({
     }
 });
 
-game.Loader.touchToStart = false;
+game.Loader.touchToStart = true;
 
 });
