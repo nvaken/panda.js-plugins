@@ -8,28 +8,42 @@ Copy `websocket.js` into `src/plugins/` folder.
 
 ### Example
 
+Client
+
     SceneGame = game.Scene.extend({
         init: function() {
             game.websocket.open = this.socketOpen.bind(this);
             game.websocket.message = this.socketMessage.bind(this);
-            game.websocket.connect('ws://localhost:8080');
+            game.websocket.connect('ws://localhost:5000');
         },
 
         socketOpen: function() {
-            console.log('Connection opened');
-
-            // Send binary data
-            var data = new Uint8Array([0,0,2]);
-            game.websocket.send(data);
+            // Connected to server
         },
 
         socketMessage: function(message) {
-            if(message.data instanceof ArrayBuffer) {
-                // Receive binary data
-                var data = new Uint8Array(message.data);
-                console.log(data);
-            } else {
-                console.log('Received message ' + message.data);
-            }
+            // Message from server
         }
+    });
+
+Server (node.js)
+
+    var WebSocketServer = require('ws').Server;
+    var port = process.env.PORT || 5000;
+
+    var wss = new WebSocketServer({port: port});
+
+    wss.on('connection', function(client) {
+        // Client connected
+
+        client.on('message', function(data, flags) {
+            // Message from client
+        });
+
+        client.on('close', function() {
+            // Client disconnected
+        });
+
+        // Send message to client
+        client.send('ping');
     });
