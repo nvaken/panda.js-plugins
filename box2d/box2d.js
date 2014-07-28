@@ -1591,33 +1591,41 @@ var Features = function () {
 
 Features.prototype.__constructor = function () {};
 Features.prototype.__varz = function () {};
-Features.prototype.__defineGetter__("referenceEdge", function () {
-    return this._referenceEdge;
+Object.defineProperty(Features.prototype, "referenceEdge", {
+    get: function() {
+        return this._referenceEdge;
+    },
+    set: function(value) {
+        this._referenceEdge = value;
+        this._m_id._key = this._m_id._key & 4294967040 | this._referenceEdge & 255;
+    }
 });
-Features.prototype.__defineSetter__("referenceEdge", function (value) {
-    this._referenceEdge = value;
-    this._m_id._key = this._m_id._key & 4294967040 | this._referenceEdge & 255;
+Object.defineProperty(Features.prototype, "incidentEdge", {
+    get: function() {
+        return this._incidentEdge;
+    },
+    set: function(value) {
+        this._incidentEdge = value;
+        this._m_id._key = this._m_id._key & 4294902015 | this._incidentEdge << 8 & 65280;
+    }
 });
-Features.prototype.__defineGetter__("incidentEdge", function () {
-    return this._incidentEdge;
+Object.defineProperty(Features.prototype, "incidentVertex", {
+    get: function() {
+        return this._incidentVertex;
+    },
+    set: function(value) {
+        this._incidentVertex = value;
+        this._m_id._key = this._m_id._key & 4278255615 | this._incidentVertex << 16 & 16711680;
+    }
 });
-Features.prototype.__defineSetter__("incidentEdge", function (value) {
-    this._incidentEdge = value;
-    this._m_id._key = this._m_id._key & 4294902015 | this._incidentEdge << 8 & 65280;
-});
-Features.prototype.__defineGetter__("incidentVertex", function () {
-    return this._incidentVertex;
-});
-Features.prototype.__defineSetter__("incidentVertex", function (value) {
-    this._incidentVertex = value;
-    this._m_id._key = this._m_id._key & 4278255615 | this._incidentVertex << 16 & 16711680;
-});
-Features.prototype.__defineGetter__("flip", function () {
-    return this._flip;
-});
-Features.prototype.__defineSetter__("flip", function (value) {
-    this._flip = value;
-    this._m_id._key = this._m_id._key & 16777215 | this._flip << 24 & 4278190080;
+Object.defineProperty(Features.prototype, "flip", {
+    get: function() {
+        return this._flip;
+    },
+    set: function(value) {
+        this._flip = value;
+        this._m_id._key = this._m_id._key & 16777215 | this._flip << 24 & 4278190080;
+    }
 });
 Features.prototype._referenceEdge = 0;
 Features.prototype._incidentEdge = 0;
@@ -2703,15 +2711,17 @@ Box2D.ContactID.prototype.Copy = function () {
     id.key = this._key;
     return id;
 };
-Box2D.ContactID.prototype.__defineSetter__("key", function () {
-    return this._key;
-});
-Box2D.ContactID.prototype.__defineSetter__("key", function (value) {
-    this._key = value;
-    this.features._referenceEdge = this._key & 255;
-    this.features._incidentEdge = (this._key & 65280) >> 8 & 255;
-    this.features._incidentVertex = (this._key & 16711680) >> 16 & 255;
-    this.features._flip = (this._key & 4278190080) >> 24 & 255;
+Object.defineProperty(Box2D.ContactID.prototype, "key", {
+    get: function() {
+        return this._key;
+    },
+    set: function(value) {
+        this._key = value;
+        this.features._referenceEdge = this._key & 255;
+        this.features._incidentEdge = (this._key & 65280) >> 8 & 255;
+        this.features._incidentVertex = (this._key & 16711680) >> 16 & 255;
+        this.features._flip = (this._key & 4278190080) >> 24 & 255;
+    }
 });
 Box2D.ContactID.prototype._key = 0;
 Box2D.ContactID.prototype.features = new Features();
@@ -9012,26 +9022,34 @@ Box2D.Color.prototype.Set = function (rr, gg, bb) {
     this._g = parseInt(255 * Box2D.Math.Clamp(gg, 0, 1), 10);
     this._b = parseInt(255 * Box2D.Math.Clamp(bb, 0, 1), 10);
 };
-Box2D.Color.prototype.__defineGetter__("r", function () {
-    return this._r;
+Object.defineProperty(Box2D.Color.prototype, "r", {
+    get: function() {
+        return this._r;
+    },
+    set: function(rr) {
+        this._r = parseInt(255 * Box2D.Math.Clamp(rr, 0, 1), 10);
+    }
 });
-Box2D.Color.prototype.__defineSetter__("r", function (rr) {
-    this._r = parseInt(255 * Box2D.Math.Clamp(rr, 0, 1), 10);
+Object.defineProperty(Box2D.Color.prototype, "g", {
+    get: function() {
+        return this._g;
+    },
+    set: function(gg) {
+        this._g = parseInt(255 * Box2D.Math.Clamp(gg, 0, 1), 10);
+    }
 });
-Box2D.Color.prototype.__defineGetter__("g", function () {
-    return this._g;
+Object.defineProperty(Box2D.Color.prototype, "b", {
+    get: function() {
+        return this._b;
+    },
+    set: function(bb) {
+        this._b = parseInt(255 * Box2D.Math.Clamp(bb, 0, 1), 10);
+    }
 });
-Box2D.Color.prototype.__defineSetter__("g", function (gg) {
-    this._g = parseInt(255 * Box2D.Math.Clamp(gg, 0, 1), 10);
-});
-Box2D.Color.prototype.__defineGetter__("b", function () {
-    return this._b;
-});
-Box2D.Color.prototype.__defineSetter__("b", function (bb) {
-    this._b = parseInt(255 * Box2D.Math.Clamp(bb, 0, 1), 10);
-});
-Box2D.Color.prototype.__defineGetter__("color", function () {
-    return this._r << 16 | this._g << 8 | this._b;
+Object.defineProperty(Box2D.Color.prototype, "color", {
+    get: function() {
+        return this._r << 16 | this._g << 8 | this._b;
+    }
 });
 Box2D.Color.prototype._r = 0;
 Box2D.Color.prototype._g = 0;
