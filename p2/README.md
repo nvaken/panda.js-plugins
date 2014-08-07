@@ -12,7 +12,6 @@ Copy `p2.js` into `src/plugins/` folder.
         'game.main'
     )
     .require(
-        'engine.core',
         'plugins.p2'
     )
     .body(function() {
