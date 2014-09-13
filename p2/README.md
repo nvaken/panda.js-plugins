@@ -16,7 +16,7 @@ Copy `p2.js` into `src/plugins/` folder.
     )
     .body(function() {
 
-    PhysicsObject = game.Class.extend({
+    game.createClass('PhysicsObject', {
         size: 64,
 
         init: function(x, y) {
@@ -50,7 +50,7 @@ Copy `p2.js` into `src/plugins/` folder.
         }
     });
 
-    SceneGame = game.Scene.extend({
+    game.createScene('Main', {
         backgroundColor: 0x808080,
 
         init: function() {
@@ -83,12 +83,10 @@ Copy `p2.js` into `src/plugins/` folder.
             this.world.addBody(wallBody);
 
             this.addTimer(200, function() {
-                var object = new PhysicsObject(game.system.width / 2, game.system.height / 2);
+                var object = new game.PhysicsObject(game.system.width / 2, game.system.height / 2);
                 game.scene.addObject(object);
             }, true);
         }
     });
-
-    game.start();
 
     });

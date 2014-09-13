@@ -2,7 +2,8 @@ game.module(
     'plugins.p2'
 )
 .require(
-    'engine.debug'
+    'engine.debug',
+    'engine.physics'
 )
 .body(function() {
     
@@ -13223,29 +13224,31 @@ game.Rectangle = p2.Rectangle;
 game.Material = p2.Material;
 game.ContactMaterial = p2.ContactMaterial;
 game.DistanceConstraint = p2.DistanceConstraint;
+game.Convex = p2.Convex;
 
 game.World.prototype.update = function() {
     this.step(game.system.delta);
 };
 
 game.World.prototype.addBody = function(body){
-    if(body.world) throw new Error("This body is already added to a World.");
+    if (body.world) throw 'This body is already added to a World.';
 
     this.bodies.push(body);
     body.world = this;
     this.addBodyEvent.body = body;
     this.emit(this.addBodyEvent);
 
-    if(game.debugDraw && body.shapes.length > 0) game.debugDraw.addP2Body(body);
+    if (game.debugDraw && body.shapes.length > 0) game.debugDraw.addP2Body(body); 
 };
 
 game.DebugDraw.inject({
     addP2Body: function(body) {
         var sprite = new game.Graphics();
+        sprite.ratio = body.world.ratio;
         this.drawP2DebugSprite(sprite, body);
 
-        sprite.position.x = body.position[0] * game.scene.world.ratio;
-        sprite.position.y = body.position[1] * game.scene.world.ratio;
+        sprite.position.x = body.position[0] * sprite.ratio;
+        sprite.position.y = body.position[1] * sprite.ratio;
         sprite.target = body;
         sprite.alpha = game.DebugDraw.bodyAlpha;
         this.bodyContainer.addChild(sprite);
@@ -13255,32 +13258,41 @@ game.DebugDraw.inject({
         sprite.clear();
         sprite.beginFill(game.DebugDraw.bodyColor);
 
-        if(body.shapes[0] instanceof game.Rectangle) {
-            sprite.drawRect(-body.shapes[0].width / 2 * game.scene.world.ratio, -body.shapes[0].height / 2 * game.scene.world.ratio, body.shapes[0].width * game.scene.world.ratio, body.shapes[0].height * game.scene.world.ratio);
+        if (body.shapes[0] instanceof game.Rectangle) {
+            sprite.drawRect(-body.shapes[0].width / 2 * sprite.ratio, -body.shapes[0].height / 2 * sprite.ratio, body.shapes[0].width * sprite.ratio, body.shapes[0].height * sprite.ratio);
         }
-        if(body.shapes[0] instanceof game.Circle) {
-            sprite.drawCircle(0, 0, body.shapes[0].radius * game.scene.world.ratio);
+        else if (body.shapes[0] instanceof game.Circle) {
+            sprite.drawCircle(0, 0, body.shapes[0].radius * sprite.ratio);
+        }
+        else if (body.shapes[0] instanceof game.Convex) {
+            var x, y;
+            for (var i = 0; i < body.shapes[0].vertices.length; i++) {
+                x = body.shapes[0].vertices[i][0] * sprite.ratio;
+                y = body.shapes[0].vertices[i][1] * sprite.ratio;
+                if (i === 0) sprite.moveTo(x, y);
+                else sprite.lineTo(x, y);
+            }
         }
     },
 
     updateP2: function(sprite) {
-        if(sprite.radius !== 0) {
+        if (sprite.radius !== 0) {
             // Circle
-            if(sprite.radius > 0 && sprite.radius !== sprite.target.shapes[0].radius * game.scene.world.ratio) {
+            if (sprite.radius > 0 && sprite.radius !== sprite.target.shapes[0].radius * sprite.ratio) {
                 this.drawDebugSprite(sprite, sprite.target);
             }
         } else {
             // Rectangle
-            if(sprite.width !== sprite.target.shapes[0].width * game.scene.world.ratio ||
-                sprite.height !== sprite.target.shapes[0].height * game.scene.world.ratio) {
+            if (sprite.width !== sprite.target.shapes[0].width * sprite.ratio ||
+                sprite.height !== sprite.target.shapes[0].height * sprite.ratio) {
                 this.drawDebugSprite(sprite, sprite.target);
             }
         }
 
         sprite.rotation = sprite.target.angle;
-        sprite.position.x = sprite.target.position[0] * game.scene.world.ratio + game.scene.stage.position.x;
-        sprite.position.y = sprite.target.position[1] * game.scene.world.ratio + game.scene.stage.position.y;
-        if(!sprite.target.world) this.bodyContainer.removeChild(sprite);
+        sprite.position.x = sprite.target.position[0] * sprite.ratio + game.scene.stage.position.x;
+        sprite.position.y = sprite.target.position[1] * sprite.ratio + game.scene.stage.position.y;
+        if (!sprite.target.world) this.bodyContainer.removeChild(sprite);
     }
 });
 
