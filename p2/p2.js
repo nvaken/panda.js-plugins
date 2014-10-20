@@ -13238,7 +13238,7 @@ game.World.prototype.addBody = function(body){
     this.addBodyEvent.body = body;
     this.emit(this.addBodyEvent);
 
-    if (game.debugDraw && body.shapes.length > 0) game.debugDraw.addP2Body(body); 
+    if (game.debugDraw && body.shapes.length > 0) game.debugDraw.addBody(body); 
 };
 
 game.DebugDraw.inject({
