@@ -13242,57 +13242,52 @@ game.World.prototype.addBody = function(body){
 };
 
 game.DebugDraw.inject({
-    addP2Body: function(body) {
+    addBody: function(body) {
         var sprite = new game.Graphics();
-        sprite.ratio = body.world.ratio;
-        this.drawP2DebugSprite(sprite, body);
+        this.drawBodySprite(sprite, body);
 
-        sprite.position.x = body.position[0] * sprite.ratio;
-        sprite.position.y = body.position[1] * sprite.ratio;
+        sprite.position.x = body.position[0] * game.scene.world.ratio;
+        sprite.position.y = body.position[1] * game.scene.world.ratio;
         sprite.target = body;
         sprite.alpha = game.DebugDraw.bodyAlpha;
         this.bodyContainer.addChild(sprite);
     },
 
-    drawP2DebugSprite: function(sprite, body) {
+    drawBodySprite: function(sprite, body) {
         sprite.clear();
         sprite.beginFill(game.DebugDraw.bodyColor);
 
-        if (body.shapes[0] instanceof game.Rectangle) {
-            sprite.drawRect(-body.shapes[0].width / 2 * sprite.ratio, -body.shapes[0].height / 2 * sprite.ratio, body.shapes[0].width * sprite.ratio, body.shapes[0].height * sprite.ratio);
+        if(body.shapes[0] instanceof game.Rectangle) {
+            sprite.drawRect(-body.shapes[0].width / 2 * game.scene.world.ratio, -body.shapes[0].height / 2 * game.scene.world.ratio, body.shapes[0].width * game.scene.world.ratio, body.shapes[0].height * game.scene.world.ratio);
         }
-        else if (body.shapes[0] instanceof game.Circle) {
-            sprite.drawCircle(0, 0, body.shapes[0].radius * sprite.ratio);
-        }
-        else if (body.shapes[0] instanceof game.Convex) {
-            var x, y;
-            for (var i = 0; i < body.shapes[0].vertices.length; i++) {
-                x = body.shapes[0].vertices[i][0] * sprite.ratio;
-                y = body.shapes[0].vertices[i][1] * sprite.ratio;
-                if (i === 0) sprite.moveTo(x, y);
-                else sprite.lineTo(x, y);
-            }
+        if(body.shapes[0] instanceof game.Circle) {
+            sprite.drawCircle(0, 0, body.shapes[0].radius * game.scene.world.ratio);
         }
     },
 
-    updateP2: function(sprite) {
-        if (sprite.radius !== 0) {
-            // Circle
-            if (sprite.radius > 0 && sprite.radius !== sprite.target.shapes[0].radius * sprite.ratio) {
-                this.drawDebugSprite(sprite, sprite.target);
-            }
-        } else {
-            // Rectangle
-            if (sprite.width !== sprite.target.shapes[0].width * sprite.ratio ||
-                sprite.height !== sprite.target.shapes[0].height * sprite.ratio) {
-                this.drawDebugSprite(sprite, sprite.target);
-            }
-        }
+    updateBodies: function() {
+        var body;
+        for (var i = this.bodyContainer.children.length - 1; i >= 0; i--) {
+            body = this.bodyContainer.children[i];
 
-        sprite.rotation = sprite.target.angle;
-        sprite.position.x = sprite.target.position[0] * sprite.ratio + game.scene.stage.position.x;
-        sprite.position.y = sprite.target.position[1] * sprite.ratio + game.scene.stage.position.y;
-        if (!sprite.target.world) this.bodyContainer.removeChild(sprite);
+            if(body.radius !== 0) {
+                // Circle
+                if (body.radius > 0 && body.radius !== body.target.shapes[0].radius * game.scene.world.ratio) {
+                    this.drawBodybody(body, body.target);
+                }
+            } else {
+                // Rectangle
+                if (body.width !== body.target.shapes[0].width * game.scene.world.ratio ||
+                    body.height !== body.target.shapes[0].height * game.scene.world.ratio) {
+                    this.drawBodybody(body, body.target);
+                }
+            }
+
+            body.rotation = body.target.angle;
+            body.position.x = body.target.position[0] * game.scene.world.ratio + game.scene.stage.position.x;
+            body.position.y = body.target.position[1] * game.scene.world.ratio + game.scene.stage.position.y;
+            if (!body.target.world) this.bodyContainer.removeChild(body);
+        }
     }
 });
 
