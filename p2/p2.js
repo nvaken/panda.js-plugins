@@ -6,7 +6,7 @@ game.module(
     'engine.physics'
 )
 .body(function() {
-    
+
 /**
  * The MIT License (MIT)
  * 
@@ -1149,123 +1149,123 @@ function assert (test, message) {
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
-    'use strict';
+  'use strict';
 
   var Arr = (typeof Uint8Array !== 'undefined')
     ? Uint8Array
     : Array
 
-    var ZERO   = '0'.charCodeAt(0)
-    var PLUS   = '+'.charCodeAt(0)
-    var SLASH  = '/'.charCodeAt(0)
-    var NUMBER = '0'.charCodeAt(0)
-    var LOWER  = 'a'.charCodeAt(0)
-    var UPPER  = 'A'.charCodeAt(0)
+  var ZERO   = '0'.charCodeAt(0)
+  var PLUS   = '+'.charCodeAt(0)
+  var SLASH  = '/'.charCodeAt(0)
+  var NUMBER = '0'.charCodeAt(0)
+  var LOWER  = 'a'.charCodeAt(0)
+  var UPPER  = 'A'.charCodeAt(0)
 
-    function decode (elt) {
-        var code = elt.charCodeAt(0)
-        if (code === PLUS)
-            return 62 // '+'
-        if (code === SLASH)
-            return 63 // '/'
-        if (code < NUMBER)
-            return -1 //no match
-        if (code < NUMBER + 10)
-            return code - NUMBER + 26 + 26
-        if (code < UPPER + 26)
-            return code - UPPER
-        if (code < LOWER + 26)
-            return code - LOWER + 26
+  function decode (elt) {
+    var code = elt.charCodeAt(0)
+    if (code === PLUS)
+      return 62 // '+'
+    if (code === SLASH)
+      return 63 // '/'
+    if (code < NUMBER)
+      return -1 //no match
+    if (code < NUMBER + 10)
+      return code - NUMBER + 26 + 26
+    if (code < UPPER + 26)
+      return code - UPPER
+    if (code < LOWER + 26)
+      return code - LOWER + 26
+  }
+
+  function b64ToByteArray (b64) {
+    var i, j, l, tmp, placeHolders, arr
+
+    if (b64.length % 4 > 0) {
+      throw new Error('Invalid string. Length must be a multiple of 4')
     }
 
-    function b64ToByteArray (b64) {
-        var i, j, l, tmp, placeHolders, arr
+    // the number of equal signs (place holders)
+    // if there are two placeholders, than the two characters before it
+    // represent one byte
+    // if there is only one, then the three characters before it represent 2 bytes
+    // this is just a cheap hack to not do indexOf twice
+    var len = b64.length
+    placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
 
-        if (b64.length % 4 > 0) {
-            throw new Error('Invalid string. Length must be a multiple of 4')
-        }
+    // base64 is 4/3 + up to two characters of the original data
+    arr = new Arr(b64.length * 3 / 4 - placeHolders)
 
-        // the number of equal signs (place holders)
-        // if there are two placeholders, than the two characters before it
-        // represent one byte
-        // if there is only one, then the three characters before it represent 2 bytes
-        // this is just a cheap hack to not do indexOf twice
-        var len = b64.length
-        placeHolders = '=' === b64.charAt(len - 2) ? 2 : '=' === b64.charAt(len - 1) ? 1 : 0
+    // if there are placeholders, only get up to the last complete 4 chars
+    l = placeHolders > 0 ? b64.length - 4 : b64.length
 
-        // base64 is 4/3 + up to two characters of the original data
-        arr = new Arr(b64.length * 3 / 4 - placeHolders)
+    var L = 0
 
-        // if there are placeholders, only get up to the last complete 4 chars
-        l = placeHolders > 0 ? b64.length - 4 : b64.length
-
-        var L = 0
-
-        function push (v) {
-            arr[L++] = v
-        }
-
-        for (i = 0, j = 0; i < l; i += 4, j += 3) {
-            tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
-            push((tmp & 0xFF0000) >> 16)
-            push((tmp & 0xFF00) >> 8)
-            push(tmp & 0xFF)
-        }
-
-        if (placeHolders === 2) {
-            tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
-            push(tmp & 0xFF)
-        } else if (placeHolders === 1) {
-            tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
-            push((tmp >> 8) & 0xFF)
-            push(tmp & 0xFF)
-        }
-
-        return arr
+    function push (v) {
+      arr[L++] = v
     }
 
-    function uint8ToBase64 (uint8) {
-        var i,
-            extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
-            output = "",
-            temp, length
-
-        function encode (num) {
-            return lookup.charAt(num)
-        }
-
-        function tripletToBase64 (num) {
-            return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
-        }
-
-        // go through the array every three bytes, we'll deal with trailing stuff later
-        for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
-            temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
-            output += tripletToBase64(temp)
-        }
-
-        // pad the end with zeros, but make sure to not forget the extra bytes
-        switch (extraBytes) {
-            case 1:
-                temp = uint8[uint8.length - 1]
-                output += encode(temp >> 2)
-                output += encode((temp << 4) & 0x3F)
-                output += '=='
-                break
-            case 2:
-                temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
-                output += encode(temp >> 10)
-                output += encode((temp >> 4) & 0x3F)
-                output += encode((temp << 2) & 0x3F)
-                output += '='
-                break
-        }
-
-        return output
+    for (i = 0, j = 0; i < l; i += 4, j += 3) {
+      tmp = (decode(b64.charAt(i)) << 18) | (decode(b64.charAt(i + 1)) << 12) | (decode(b64.charAt(i + 2)) << 6) | decode(b64.charAt(i + 3))
+      push((tmp & 0xFF0000) >> 16)
+      push((tmp & 0xFF00) >> 8)
+      push(tmp & 0xFF)
     }
 
-    module.exports.toByteArray = b64ToByteArray
-    module.exports.fromByteArray = uint8ToBase64
+    if (placeHolders === 2) {
+      tmp = (decode(b64.charAt(i)) << 2) | (decode(b64.charAt(i + 1)) >> 4)
+      push(tmp & 0xFF)
+    } else if (placeHolders === 1) {
+      tmp = (decode(b64.charAt(i)) << 10) | (decode(b64.charAt(i + 1)) << 4) | (decode(b64.charAt(i + 2)) >> 2)
+      push((tmp >> 8) & 0xFF)
+      push(tmp & 0xFF)
+    }
+
+    return arr
+  }
+
+  function uint8ToBase64 (uint8) {
+    var i,
+      extraBytes = uint8.length % 3, // if we have 1 byte left, pad 2 bytes
+      output = "",
+      temp, length
+
+    function encode (num) {
+      return lookup.charAt(num)
+    }
+
+    function tripletToBase64 (num) {
+      return encode(num >> 18 & 0x3F) + encode(num >> 12 & 0x3F) + encode(num >> 6 & 0x3F) + encode(num & 0x3F)
+    }
+
+    // go through the array every three bytes, we'll deal with trailing stuff later
+    for (i = 0, length = uint8.length - extraBytes; i < length; i += 3) {
+      temp = (uint8[i] << 16) + (uint8[i + 1] << 8) + (uint8[i + 2])
+      output += tripletToBase64(temp)
+    }
+
+    // pad the end with zeros, but make sure to not forget the extra bytes
+    switch (extraBytes) {
+      case 1:
+        temp = uint8[uint8.length - 1]
+        output += encode(temp >> 2)
+        output += encode((temp << 4) & 0x3F)
+        output += '=='
+        break
+      case 2:
+        temp = (uint8[uint8.length - 2] << 8) + (uint8[uint8.length - 1])
+        output += encode(temp >> 10)
+        output += encode((temp >> 4) & 0x3F)
+        output += encode((temp << 2) & 0x3F)
+        output += '='
+        break
+    }
+
+    return output
+  }
+
+  module.exports.toByteArray = b64ToByteArray
+  module.exports.fromByteArray = uint8ToBase64
 }())
 
 }).call(this,_dereq_("/Users/schteppe/git/p2.js/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/../node_modules/grunt-browserify/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib/b64.js","/../node_modules/grunt-browserify/node_modules/browserify/node_modules/buffer/node_modules/base64-js/lib")
@@ -11844,10 +11844,10 @@ module.exports = IslandNode;
  */
 function IslandNode(body){
 
-    /**
-     * The body that is contained in this node.
-     * @property {Body} body
-     */
+  /**
+   * The body that is contained in this node.
+   * @property {Body} body
+   */
     this.body = body;
 
     /**
@@ -13212,7 +13212,7 @@ World.prototype.setGlobalRelaxation = function(relaxation){
 }).call(this,_dereq_("/Users/schteppe/git/p2.js/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer,arguments[3],arguments[4],arguments[5],arguments[6],"/world/World.js","/world")
 },{"../../package.json":10,"../collision/Broadphase":12,"../collision/NaiveBroadphase":14,"../collision/Narrowphase":15,"../collision/SAPBroadphase":16,"../constraints/Constraint":17,"../constraints/DistanceConstraint":18,"../constraints/GearConstraint":19,"../constraints/LockConstraint":20,"../constraints/PrismaticConstraint":21,"../constraints/RevoluteConstraint":22,"../events/EventEmitter":29,"../material/ContactMaterial":30,"../material/Material":31,"../math/vec2":33,"../objects/Body":34,"../objects/LinearSpring":35,"../objects/RotationalSpring":36,"../shapes/Capsule":39,"../shapes/Circle":40,"../shapes/Convex":41,"../shapes/Line":43,"../shapes/Particle":44,"../shapes/Plane":45,"../shapes/Rectangle":46,"../shapes/Shape":47,"../solver/GSSolver":48,"../solver/Solver":49,"../utils/OverlapKeeper":50,"../utils/Utils":52,"./IslandManager":54,"/Users/schteppe/git/p2.js/node_modules/grunt-browserify/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":4,"buffer":1}]},{},[38])
 (38)
-});;
+});;    
 
 // Panda.js
 
