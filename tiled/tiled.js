@@ -4,6 +4,7 @@ game.module(
 .body(function() {
     
 game.createClass('TileMap', {
+    layers: {},
     tiles: [],
     tileWidth: 0,
     tileHeight: 0,
@@ -19,14 +20,15 @@ game.createClass('TileMap', {
 
         this._initTiles();
         this._initLayers();
+
+        if (game.TileMap.cacheAsBitmap) this.container.cacheAsBitmap = true;
     },
 
     _initTiles: function() {
         for (var i = 0; i < this.json.tilesets.length; i++) {
             var tileset = this.json.tilesets[i];
             
-            var path = tileset.image;
-            if (game.config.mediaFolder) path = game.config.mediaFolder + '/' + path;
+            var path = game.config.mediaFolder ? game.config.mediaFolder + '/' + tileset.image : tileset.image;
 
             var tilesInRow = Math.floor(tileset.imagewidth / tileset.tilewidth);
             var tilesInCol = Math.floor(tileset.imageheight / tileset.tileheight);
@@ -69,6 +71,8 @@ game.createClass('TileMap', {
             container.visible = layer.visible;
             if (game.TileMap.cacheLayersAsBitmap) container.cacheAsBitmap = true;
             container.addTo(this.container);
+
+            this.layers[layer.name] = container;
         }
     },
 
@@ -86,5 +90,6 @@ game.createClass('TileMap', {
 });
 
 game.TileMap.cacheLayersAsBitmap = false;
+game.TileMap.cacheAsBitmap = false;
 
 });

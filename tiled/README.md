@@ -27,3 +27,13 @@ Copy `tiled.js` into `src/plugins/` folder.
     });
 
     });
+
+### Options
+
+config.js
+    
+    tileMap: {
+        cacheLayersAsBitmap: true, // Cache every layer as bitmap
+        cacheAsBitmap: true // Cache whole tilemap as bitmap
+    }
+    
