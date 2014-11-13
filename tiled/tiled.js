@@ -32,8 +32,9 @@ game.createClass('TileMap', {
 
             var tilesInRow = Math.floor(tileset.imagewidth / tileset.tilewidth);
             var tilesInCol = Math.floor(tileset.imageheight / tileset.tileheight);
-            
-            for (var index in tileset.tiles) {
+            var tileCount = tilesInRow * tilesInCol;
+
+            for (var index = 0; index < tileCount; index++) {
                 var currentRow = Math.floor(index / tilesInRow);
                 var currentCol = Math.floor(index % tilesInRow);
 
@@ -58,6 +59,8 @@ game.createClass('TileMap', {
             var container = new game.Container();
 
             for (var o = 0; o < layer.data.length; o++) {
+                if (layer.data[o] === 0) continue;
+
                 var tile = this.getTile(layer.data[o]);
                 var x = this.tileWidth * (o % layer.width);
                 var y = this.tileHeight * Math.floor(o / layer.height);
