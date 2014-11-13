@@ -8,6 +8,14 @@ Copy `tiled.js` into `src/plugins/` folder.
 
 ### Example
 
+    game.module(
+        'game.main'
+    )
+    .require(
+        'plugins.tiled'
+    )
+    .body(function() {
+
     game.addAsset('desert.json');
     game.addAsset('tmw_desert_spacing.png');
 
@@ -17,4 +25,5 @@ Copy `tiled.js` into `src/plugins/` folder.
             tilemap.addTo(this.stage);
         }
     });
-    
+
+    });
