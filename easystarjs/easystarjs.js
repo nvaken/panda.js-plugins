@@ -560,6 +560,7 @@ game.module(
         };
     }
 
+    // Panda.JS
     game.EasyStar = EasyStar.js;
     game.EasyStar.prototype.update = function () {
         this.calculate();
