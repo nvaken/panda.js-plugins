@@ -87,6 +87,51 @@ game.createClass('TileMap', {
         this.container.addTo(container);
     },
 
+    getLayerNames: function () {
+        return Object.keys(this.json.layers);
+    },
+
+    getTileIdAt: function (layerName, x, y) {
+        var layer = this.getLayer(layerName);
+        var index = y * layer.width + x;
+
+        if (typeof layer.data[index] != 'undefined')
+            return layer.data[index] - 1;
+        return false;
+    },
+
+    getLayerMatrix: function (layerName) {
+        var layer = this.getLayer(layerName);
+
+        var colCount  = layer.width;
+        var rowCount = Math.ceil(layer.data.length / colCount);
+        var matrix = [];
+        var i = 0;
+        for (var y = 0; y < rowCount; y++) {
+            var row = [];
+            for (var x = 0; x < colCount; x++) {
+                row.push(layer.data[i]);
+                i++;
+            }
+            matrix.push(row);
+        }
+        return matrix;
+    },
+
+    getTileProperties: function () {
+        return this.json.tilesets[0].tileproperties;
+    },
+
+    getLayer: function (layerName) {
+        for (var i = 0; i < this.json.layers.length; i++) {
+            var layer = this.json.layers[i];
+            if (layer.name == layerName)
+                return layer;
+            else
+                return false;
+        }
+    },
+
     remove: function() {
         if (this.container.parent) this.container.parent.removeChild(this.container);
     }
