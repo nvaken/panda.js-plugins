@@ -2,13 +2,18 @@ game.module(
     'plugins.tiled'
 )
 .body(function() {
-    
+
 game.createClass('TileMap', {
     layers: {},
     tiles: [],
     tileWidth: 0,
     tileHeight: 0,
 
+    /**
+        Constructor tiled.js
+        @method init
+        @param {String} url URL to the Tiled JSON file
+    **/
     init: function(url) {
         this.json = game.getJSON(url);
         if (!this.json) throw 'Tilemap JSON not found';
@@ -24,10 +29,14 @@ game.createClass('TileMap', {
         if (game.TileMap.cacheAsBitmap) this.container.cacheAsBitmap = true;
     },
 
+    /**
+        Init tiles, internal use only
+        @method _initTiles
+    **/
     _initTiles: function() {
         for (var i = 0; i < this.json.tilesets.length; i++) {
             var tileset = this.json.tilesets[i];
-            
+
             var path = game.config.mediaFolder ? game.config.mediaFolder + '/' + tileset.image : tileset.image;
 
             var tilesInRow = Math.floor(tileset.imagewidth / tileset.tilewidth);
@@ -47,12 +56,16 @@ game.createClass('TileMap', {
                 y += tileset.spacing * currentRow;
 
                 var texture = new game.Texture(game.TextureCache[path], new game.PIXI.Rectangle(x, y, tileset.tilewidth, tileset.tileheight));
-                
+
                 this.tiles[index] = texture;
             }
         }
     },
 
+    /**
+        Init layers, internal use only
+        @method _initLayers
+    **/
     _initLayers: function() {
         for (var i = 0; i < this.json.layers.length; i++) {
             var layer = this.json.layers[i];
@@ -79,18 +92,42 @@ game.createClass('TileMap', {
         }
     },
 
+    /**
+        Creates a new tile Sprite and returns it
+        @method getTile
+        @param {Number} index
+        @return {game.Sprite} New tile Sprite
+    **/
     getTile: function(index) {
         return new game.Sprite(this.tiles[index - 1]);
     },
 
+    /**
+        Add the tiled map container to container...
+        @method addTo
+        @param {game.Container} container
+    **/
     addTo: function(container) {
         this.container.addTo(container);
     },
 
+    /**
+        Get the layer names defined in the JSON source
+        @method getLayerNames
+        @return {Array} An array with the layer names
+    **/
     getLayerNames: function () {
         return Object.keys(this.json.layers);
     },
 
+    /**
+        Get the tile ID at specific coordinates
+        @method getTileIdAt
+        @param {String} layerName The layer name from which we should get the data
+        @param {Number} x x coordinate
+        @param {Number} y y coordinate
+        @return {Mixed} The ID or false when not found
+    **/
     getTileIdAt: function (layerName, x, y) {
         var layer = this.getLayer(layerName);
         var index = y * layer.width + x;
@@ -100,6 +137,12 @@ game.createClass('TileMap', {
         return false;
     },
 
+    /**
+        Gets the layer's tile id's presented in a matrix style array
+        @method getLayerMatrix
+        @param {String} layerName The layer name from which we should get the data
+        @return {Array} Multi-dimensional array, rows and columns, containing tile ID's
+    **/
     getLayerMatrix: function (layerName) {
         var layer = this.getLayer(layerName);
 
@@ -118,10 +161,23 @@ game.createClass('TileMap', {
         return matrix;
     },
 
+    /**
+        Get the tile properties defined in the JSON's tilesets
+        @method getLayerMatrix
+        @return {Object} Tile properties object
+    **/
     getTileProperties: function () {
+        // @TODO Currently, the Tiled editor seems to only be able to store one
+        // tileset's data to the JSON. Hopefully, this will change in the
+        // future and then this should be adjusted accordingly.
         return this.json.tilesets[0].tileproperties;
     },
 
+    /**
+        Get a specific layer from the JSON file
+        @method getLayer
+        @return {Mixed} Layer object or false when not found
+    **/
     getLayer: function (layerName) {
         for (var i = 0; i < this.json.layers.length; i++) {
             var layer = this.json.layers[i];
@@ -132,6 +188,10 @@ game.createClass('TileMap', {
         }
     },
 
+    /**
+        Remove the container from it's parent
+        @method remove
+    **/
     remove: function() {
         if (this.container.parent) this.container.parent.removeChild(this.container);
     }
