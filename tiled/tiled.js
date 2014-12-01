@@ -3,19 +3,19 @@ game.module(
 )
 .body(function() {
 
+/**
+    @class TileMap
+    @constructor
+    @param {String} json Filename of Tiled JSON file
+**/
 game.createClass('TileMap', {
     layers: {},
     tiles: [],
     tileWidth: 0,
     tileHeight: 0,
 
-    /**
-        Constructor tiled.js
-        @method init
-        @param {String} url URL to the Tiled JSON file
-    **/
-    init: function(url) {
-        this.json = game.getJSON(url);
+    init: function(json) {
+        this.json = game.getJSON(json);
         if (!this.json) throw 'Tilemap JSON not found';
 
         this.tileWidth = this.json.tilewidth;
@@ -103,7 +103,7 @@ game.createClass('TileMap', {
     },
 
     /**
-        Add the tiled map container to container...
+        Add tilemap to container
         @method addTo
         @param {game.Container} container
     **/
@@ -132,8 +132,7 @@ game.createClass('TileMap', {
         var layer = this.getLayer(layerName);
         var index = y * layer.width + x;
 
-        if (typeof layer.data[index] != 'undefined')
-            return layer.data[index] - 1;
+        if (typeof layer.data[index] !== 'undefined') return layer.data[index - 1];
         return false;
     },
 
@@ -145,11 +144,11 @@ game.createClass('TileMap', {
     **/
     getLayerMatrix: function (layerName) {
         var layer = this.getLayer(layerName);
-
         var colCount  = layer.width;
         var rowCount = Math.ceil(layer.data.length / colCount);
         var matrix = [];
         var i = 0;
+
         for (var y = 0; y < rowCount; y++) {
             var row = [];
             for (var x = 0; x < colCount; x++) {
@@ -158,6 +157,7 @@ game.createClass('TileMap', {
             }
             matrix.push(row);
         }
+
         return matrix;
     },
 
@@ -181,11 +181,9 @@ game.createClass('TileMap', {
     getLayer: function (layerName) {
         for (var i = 0; i < this.json.layers.length; i++) {
             var layer = this.json.layers[i];
-            if (layer.name == layerName)
-                return layer;
-            else
-                return false;
+            if (layer.name === layerName) return layer;                
         }
+        return false;
     },
 
     /**
