@@ -34743,11 +34743,6 @@ game.THREE = THREE;
 
 game.System.inject({
     initRenderer: function(width, height) {
-        this.scene = new game.THREE.Scene();
-
-        this.camera = new game.THREE.PerspectiveCamera(75, width / height, 1, 10000);
-        this.camera.position.z = 1000;
-
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(width, height);
 
@@ -34768,8 +34763,8 @@ game.Loader.inject({
 
 game.Scene.inject({
     render: function() {
-        game.renderer.render(game.system.scene, game.system.camera);
+        game.renderer.render(this.scene, this.camera);
     }
-})
+});
 
 });

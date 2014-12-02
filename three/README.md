@@ -20,11 +20,10 @@ Copy `three.js` into `src/plugins/` folder.
         init: function(width, height, depth) {
             this.geometry = new game.THREE.BoxGeometry(width, height, depth);
             this.material = new game.THREE.MeshBasicMaterial({
-                color: 0xff0000,
-                wireframe: true
+                color: Math.round(Math.random() * 16777215),
             });
             this.mesh = new game.THREE.Mesh(this.geometry, this.material);
-            game.system.scene.add(this.mesh);
+            game.scene.scene.add(this.mesh);
         },
 
         update: function() {
@@ -35,11 +34,20 @@ Copy `three.js` into `src/plugins/` folder.
 
     game.createScene('Main', {
         init: function() {
-            var box = new game.Box(200, 200, 200);
-            this.addObject(box);
+            this.scene = new game.THREE.Scene();
 
-            var box = new game.Box(100, 100, 100);
-            this.addObject(box);
+            this.camera = new game.THREE.PerspectiveCamera(75, game.system.width / game.system.height, 1, 10000);
+            this.camera.position.z = game.system.height;
+            this.camera.position.x = game.system.width / 2;
+            this.camera.position.y = game.system.height / 2;
+
+            for (var i = 0; i < 10; i++) {
+                var box = new game.Box(200, 200, 200);
+                box.mesh.position.x = Math.random() * game.system.width;
+                box.mesh.position.y = Math.random() * game.system.height;
+                box.mesh.position.z = -Math.random() * 1000;
+                this.addObject(box);
+            }
         }
     });
 
