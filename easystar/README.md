@@ -8,15 +8,13 @@ Copy `easystar.js` into `src/plugins/` folder.
 
 ### Example
 
+    var easystar = new game.EasyStar();
+
     var grid = [[0,0,1,0,0],
                 [0,0,1,0,0],
                 [0,0,1,0,0],
                 [0,0,1,0,0],
                 [0,0,0,0,0]];
-
-    // Setup grid and add it as an object to scene to run update on it
-    var easystar = new game.EasyStar();
-    game.scene.addObject(easystar); 
 
     easystar.setGrid(grid);
     easystar.setAcceptableTiles([0]);
@@ -29,25 +27,27 @@ Copy `easystar.js` into `src/plugins/` folder.
         }
     });
 
-### Combination with Tile.js plugin example
+    game.scene.addObject(easystar);
 
-    this.tilemap = new game.TileMap('desert.json');
-    this.tilemap.addTo(game.scene.stage);
+### Example with tiled.js plugin
+
+    var tilemap = new game.TileMap('desert.json');
+    tilemap.addTo(game.scene.stage);
 
     // Get some much needed info from Tiled.js 
     // You'll need to set the Tile properties in the Tiled map editor
     // in this example these are added as "walkable" and "movementCost"
-    var grid = this.tilemap.getLayerMatrix('Tile Layer 1');
-    var tileData = this.tilemap.getTileProperties();
+    var grid = tilemap.getLayerMatrix('layer');
+    var tileData = tilemap.getTileProperties();
 
-    // Setup easystar
+    // Setup EasyStar
     var easystar = new game.EasyStar();
     easystar.setGrid(grid);
 
     // Set the acceptable tiles and set movement cost
     var acceptableTiles = [];
     for (var i in tileData) {
-        if (typeof tileData[i].walkable != 'undefined' && tileData[i].walkable == true){
+        if (tileData[i].walkable === true) {
             i = parseInt(i);
 
             acceptableTiles.push(i + 1);
@@ -55,7 +55,6 @@ Copy `easystar.js` into `src/plugins/` folder.
         }
     }
     easystar.setAcceptableTiles(acceptableTiles);
-    this.addObject(easystar);
 
     easystar.findPath(18, 0, 18, 50, function( path ) {
         if (path === null) {
@@ -63,4 +62,6 @@ Copy `easystar.js` into `src/plugins/` folder.
         } else {
             alert("Path was found. The first Point is " + path[0].x + " " + path[0].y);
         }
-    }));
+    });
+    
+    game.scene.addObject(easystar);
