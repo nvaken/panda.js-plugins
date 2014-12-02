@@ -3,12 +3,10 @@ game.module(
 )
 .body(function() {
     
-game.Fader = game.Class.extend({
-    speed: 500,
+game.createClass('Fader', {
     color: 0x000000,
+    speed: 500,
     fading: false,
-    sprite: null,
-    callback: null,
 
     init: function(settings) {
         game.merge(this, settings);
@@ -22,11 +20,11 @@ game.Fader = game.Class.extend({
         game.tweenEngine.stopTweensForObject(this.sprite);
 
         this.callback = callback;
-        if(this.sprite.alpha === 0) this.sprite.alpha = 1;
+        if (this.sprite.alpha === 0) this.sprite.alpha = 1;
         game.system.stage.addChild(this.sprite);
 
         var tween = new game.Tween(this.sprite);
-        tween.to({alpha: 0}, this.speed);
+        tween.to({ alpha: 0 }, this.speed);
         tween.onComplete(this.fadeComplete.bind(this, true));
         tween.start();
 
@@ -37,11 +35,11 @@ game.Fader = game.Class.extend({
         game.tweenEngine.stopTweensForObject(this.sprite);
 
         this.callback = callback;
-        if(this.sprite.alpha === 1) this.sprite.alpha = 0;
+        if (this.sprite.alpha === 1) this.sprite.alpha = 0;
         game.system.stage.addChild(this.sprite);
 
         var tween = new game.Tween(this.sprite);
-        tween.to({alpha: 1}, this.speed);
+        tween.to({ alpha: 1 }, this.speed);
         tween.onComplete(this.fadeComplete.bind(this));
         tween.start();
 
@@ -50,8 +48,8 @@ game.Fader = game.Class.extend({
 
     fadeComplete: function(remove) {
         this.fading = false;
-        if(typeof(this.callback) === 'function') this.callback();
-        if(remove) game.system.stage.removeChild(this.sprite);
+        if (typeof this.callback === 'function') this.callback();
+        if (remove) game.system.stage.removeChild(this.sprite);
     }
 });
 

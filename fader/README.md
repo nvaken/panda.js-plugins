@@ -8,28 +8,26 @@ Copy `fader.js` into `src/plugins/` folder.
 
 ### Example
 
-```javascript
-SceneGame = game.Scene.extend({
-    init: function() {
-        var fader = new game.Fader({
-            color: 0xff0000,
-            speed: 2000
-        });
+    game.createScene('Main', {
+        init: function() {
+            var fader = new game.Fader({
+                color: 0xff0000,
+                speed: 2000
+            });
 
-        fader.fadeIn(function() {
-            console.log('Fade completed');
-        });
-    }
-});
-```
+            fader.fadeIn(function() {
+                console.log('Fade completed');
+            });
+        }
+    });
 
-### API
+### Documentation
 
 Methods
 
 - `fadeIn(callback)`
 
-    _callback_ Function that is called, when fader is complete
+    _callback_ Callback function, when fader is complete
     
 - `fadeOut(callback)`
 
