@@ -3,18 +3,15 @@ game.module(
 )
 .body(function() {
     
-game.Worker = game.Class.extend({
-    worker: null,
-
+game.createClass('Worker', {
     init: function(file) {
-        if(!window.Worker) throw('Web Worker not supported');
+        if (!window.Worker) throw('Web Worker not supported');
 
         this.worker = new Worker(file);
     },
 
     onMessage: function(callback) {
         this.worker.onmessage = callback;
-        return this;
     },
 
     send: function(data) {
