@@ -13276,13 +13276,28 @@ game.DebugDraw.inject({
 
     drawBodySprite: function(sprite, body) {
         sprite.clear();
-        sprite.beginFill(game.DebugDraw.bodyColor);
 
-        if(body.shapes[0] instanceof game.Rectangle) {
-            sprite.drawRect(-body.shapes[0].width / 2 * game.scene.world.ratio, -body.shapes[0].height / 2 * game.scene.world.ratio, body.shapes[0].width * game.scene.world.ratio, body.shapes[0].height * game.scene.world.ratio);
-        }
-        if(body.shapes[0] instanceof game.Circle) {
-            sprite.drawCircle(0, 0, body.shapes[0].radius * game.scene.world.ratio);
+        for (var i = 0; i < body.shapes.length; i++) {
+            var childSprite = new game.Graphics();
+            childSprite.beginFill(game.DebugDraw.bodyColor);
+            childSprite.position = new game.PIXI.Point(
+                body.shapeOffsets[i][0],
+                body.shapeOffsets[i][1]
+            );
+            childSprite.rotation = body.shapeAngles[i];
+            childSprite.pivot = new game.PIXI.Point(body.shapes[i].width, body.shapes[i].height);
+            if(body.shapes[i] instanceof game.Rectangle) {
+                childSprite.drawRect(
+                    (body.shapes[i].width / 2) * game.scene.world.ratio,
+                    (body.shapes[i].height / 2) * game.scene.world.ratio,
+                    body.shapes[i].width * game.scene.world.ratio,
+                    body.shapes[i].height * game.scene.world.ratio
+                );
+            }
+            if(body.shapes[i] instanceof game.Circle) {
+                childSprite.drawCircle(0, 0, body.shapes[i].radius * game.scene.world.ratio);
+            }
+            sprite.addChild(childSprite);
         }
     },
 
