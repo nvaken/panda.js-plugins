@@ -1,6 +1,3 @@
-/**
-    @module chrome_local_storage
-**/
 game.module(
     'plugins.chrome_local_storage'
 )
@@ -19,12 +16,13 @@ game.Storage = game.Storage.extend({
     // Quick store
     storageData: {},
     isChromeApp: false,
+
     init: function(id) {
         this.id = id;
         // Try work with chrome.storage
         try {
             var that = this;
-            chrome.storage.local.get(null, function (result) {
+            chrome.storage.local.get(null, function(result) {
                 // Set quick store
                 that.isChromeApp = true;
                 for (var k in result) {
