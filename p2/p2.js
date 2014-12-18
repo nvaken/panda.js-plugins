@@ -13294,6 +13294,13 @@ game.DebugDraw.inject({
                     body.shapes[i].height * game.scene.world.ratio
                 );
             }
+            else if (body.shapes[i] instanceof game.Convex) {
+                var vertices = body.shapes[i].vertices;
+                childSprite.moveTo(vertices[0][0], vertices[0][1]);
+                for (var index in vertices) {
+                    childSprite.lineTo(vertices[index][0], vertices[index][1]);
+                }
+            }
             if(body.shapes[i] instanceof game.Circle) {
                 childSprite.drawCircle(0, 0, body.shapes[i].radius * game.scene.world.ratio);
             }
