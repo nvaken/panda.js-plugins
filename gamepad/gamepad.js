@@ -47,7 +47,6 @@ game.createClass('GamePad', {
         
         for (var i = 0; i < data.axes.length; i++) {
             this.axes[i] = data.axes[i];
-            // console.log(this.axes[i]);
         }
     }
 });
