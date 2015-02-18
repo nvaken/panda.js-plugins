@@ -4,10 +4,20 @@ Fade between scenes.
 
 ### Install
 
-Copy `fader.js` into `src/plugins/` folder.
+1. Copy `fader.js` into `src/plugins/` folder.
+
+2. Require plugin from game module.
 
 ### Example
 
+    game.module(
+        'game.main'
+    )
+    .require(
+        'plugins.fader'
+    )
+    .body(function() {
+        
     game.createScene('Main', {
         init: function() {
             var fader = new game.Fader({
@@ -19,6 +29,8 @@ Copy `fader.js` into `src/plugins/` folder.
                 console.log('Fade completed');
             });
         }
+    });
+    
     });
 
 ### Documentation
