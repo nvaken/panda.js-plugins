@@ -10,7 +10,7 @@ Copy `websocket.js` into `src/plugins/` folder.
 
 Client
 
-    SceneGame = game.Scene.extend({
+    game.createScene('Main', {
         init: function() {
             game.websocket.open = this.socketOpen.bind(this);
             game.websocket.message = this.socketMessage.bind(this);
@@ -47,3 +47,4 @@ Server (node.js)
         // Send message to client
         client.send('ping');
     });
+    

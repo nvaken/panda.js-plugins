@@ -1,7 +1,7 @@
-## Panda.js plugins
+# Panda Engine plugins
 
-Official repository for [Panda.js](http://www.pandajs.net) plugins.
+## Install
 
-### Contribute
+1. Copy `myplugin.js` file into `src/plugins` folder.
 
-To add your own plugin here, please create Pull Request with new folder for your plugin.
+2. Require plugin from your game module `require('plugins.myplugin')`

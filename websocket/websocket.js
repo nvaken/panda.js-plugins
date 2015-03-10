@@ -3,19 +3,13 @@ game.module(
 )
 .body(function() {
 
-game.WebSocket = game.Class.extend({
+game.createClass('WebSocket', {
     connection: null,
 
-    init: function() {
-        game.websocket = this;
-    },
-
     connect: function(host) {
-        host = host || game.WebSocket.host;
-        if(!host) throw('WebSocket host not defined');
-        if(!window.WebSocket) throw('WebSocket not supported');
+        if (!window.WebSocket) throw('WebSocket not supported');
 
-        this.connection = new WebSocket(host);
+        this.connection = new WebSocket(host || game.WebSocket.host);
         this.connection.binaryType = game.WebSocket.binaryType;
         this.connection.onopen = this.open.bind(this);
         this.connection.onclose = this.close.bind(this);
@@ -28,25 +22,22 @@ game.WebSocket = game.Class.extend({
     },
 
     send: function(data) {
-        if(this.connected()) this.connection.send(data);
+        if (this.connected()) {
+            this.connection.send(data);
+            return true;
+        }
+        return false;
     },
 
-    open: function() {
-    },
-
-    close: function() {
-    },
-
-    message: function() {
-    },
-
-    error: function() {
-    }
+    open: function() {},
+    close: function() {},
+    message: function() {},
+    error: function() {}
 });
 
 game.WebSocket.host = '';
 game.WebSocket.binaryType = 'arraybuffer';
 
-game.plugins.websocket = game.WebSocket;
+game.websocket = new game.WebSocket();
 
 });
