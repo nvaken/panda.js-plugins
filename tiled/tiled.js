@@ -139,13 +139,13 @@ game.createClass('TileMap', {
         var tileWidth = this.tileWidth;
         var tileHeight = this.tileHeight;
 
-        if (this.orientation == 'orthogonal') {
+        if (this.orientation === 'orthogonal') {
             return {
                 x: x * tileWidth,
                 y: y * tileHeight,
             };
         }
-        else if (this.orientation == 'isometric') {
+        else if (this.orientation === 'isometric') {
             return {
                 x: (x - y) * (tileWidth / 2),
                 y: (x + y) * (tileHeight / 2)
@@ -206,7 +206,7 @@ game.createClass('TileMap', {
     **/
     getLayerMatrix: function (layerName) {
         var layer = this.getLayer(layerName);
-        var colCount  = layer.width;
+        var colCount = layer.width;
         var rowCount = Math.ceil(layer.data.length / colCount);
         var matrix = [];
         var i = 0;
