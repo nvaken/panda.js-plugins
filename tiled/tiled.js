@@ -128,6 +128,13 @@ game.createClass('TileMap', {
         }
     },
 
+    /**
+        Get the screen position for a specific coordinate, this is dependent on the type of map
+        @method getPosition
+        @param {Number} x
+        @param {Number} y
+        @return {Object} Object with x and y screen coords
+    **/
     getPosition: function (x, y) {
         var tileWidth = this.tileWidth;
         var tileHeight = this.tileHeight;
