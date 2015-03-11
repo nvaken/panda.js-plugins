@@ -13,6 +13,7 @@ game.createClass('TileMap', {
     tiles: [],
     tileWidth: 0,
     tileHeight: 0,
+    orientation: 'orthogonal',
 
     init: function(json) {
         this.json = game.getJSON(json);
@@ -20,6 +21,7 @@ game.createClass('TileMap', {
 
         this.tileWidth = this.json.tilewidth;
         this.tileHeight = this.json.tileheight;
+        this.orientation = this.json.orientation;
 
         this.container = new game.Container();
 
@@ -34,18 +36,27 @@ game.createClass('TileMap', {
         @method _initTiles
     **/
     _initTiles: function() {
+        var tileIndex = 0;
         for (var i = 0; i < this.json.tilesets.length; i++) {
             var tileset = this.json.tilesets[i];
+            var tileset_path = null;
 
-            var path = game.config.mediaFolder ? game.config.mediaFolder + '/' + tileset.image : tileset.image;
+            if (typeof tileset.image !== 'undefined') {
+                tileset_path = game.config.mediaFolder ? game.config.mediaFolder + '/' + tileset.image : tileset.image;
 
-            var tilesInRow = Math.floor(tileset.imagewidth / tileset.tilewidth);
-            var tilesInCol = Math.floor(tileset.imageheight / tileset.tileheight);
-            var tileCount = tilesInRow * tilesInCol;
+                var tilesInRow = Math.floor(tileset.imagewidth / tileset.tilewidth);
+                var tilesInCol = Math.floor(tileset.imageheight / tileset.tileheight);
+                var tileCount = tilesInRow * tilesInCol;
+            }
+            else if (typeof tileset.tiles !== 'undefined') {
+                var path = null;
+                var tileCount = Object.keys(tileset.tiles).length;
+            }
 
             for (var index = 0; index < tileCount; index++) {
                 var currentRow = Math.floor(index / tilesInRow);
                 var currentCol = Math.floor(index % tilesInRow);
+                var path = null;
 
                 var x = tileset.tilewidth * Math.floor(index % tilesInRow);
                 x += tileset.margin;
@@ -55,10 +66,30 @@ game.createClass('TileMap', {
                 y += tileset.margin;
                 y += tileset.spacing * currentRow;
 
-                var texture = new game.Texture(game.TextureCache[path], new game.PIXI.Rectangle(x, y, tileset.tilewidth, tileset.tileheight));
+                if (tileset_path === null) {
+                    path = game.config.mediaFolder ? game.config.mediaFolder + '/' + tileset.tiles[index].image : tileset.tiles[index].image;
+                    var frame = {
+                        x: 0,
+                        y: 0,
+                        width: game.TextureCache[path].width,
+                        height: game.TextureCache[path].height
+                    };
+                }
+                else {
+                    path = tileset_path;
+                    var frame = {
+                        x: x,
+                        y: y,
+                        width: tileset.tilewidth,
+                        height: tileset.tileheight
+                    };
+                }
 
-                this.tiles[index] = texture;
+                var texture = new game.Texture(game.TextureCache[path], new game.PIXI.Rectangle(frame.x, frame.y, frame.width, frame.height));
+
+                this.tiles[tileIndex + index] = texture;
             }
+            tileIndex += index;
         }
     },
 
@@ -75,10 +106,15 @@ game.createClass('TileMap', {
                 if (layer.data[o] === 0) continue;
 
                 var tile = this.getTile(layer.data[o]);
-                var x = this.tileWidth * (o % layer.width);
-                var y = this.tileHeight * Math.floor(o / layer.height);
-                tile.position.x = x;
-                tile.position.y = y;
+                var x = (o % layer.width);
+                var y = Math.floor(o / layer.height);
+                var position = this.getPosition(x, y);
+                tile.anchor.set(
+                    0.5,
+                    1 - this.tileHeight / tile.height
+                );
+                tile.position.x = position.x;
+                tile.position.y = position.y;
                 tile.addTo(container);
             }
 
@@ -90,6 +126,25 @@ game.createClass('TileMap', {
 
             this.layers[layer.name] = container;
         }
+    },
+
+    getPosition: function (x, y) {
+        var tileWidth = this.tileWidth;
+        var tileHeight = this.tileHeight;
+
+        if (this.orientation == 'orthogonal') {
+            return {
+                x: x * tileWidth,
+                y: y * tileHeight,
+            };
+        }
+        else if (this.orientation == 'isometric') {
+            return {
+                x: (x - y) * (tileWidth / 2),
+                y: (x + y) * (tileHeight / 2)
+            };
+        }
+        return false;
     },
 
     /**
@@ -181,7 +236,7 @@ game.createClass('TileMap', {
     getLayer: function (layerName) {
         for (var i = 0; i < this.json.layers.length; i++) {
             var layer = this.json.layers[i];
-            if (layer.name === layerName) return layer;                
+            if (layer.name === layerName) return layer;
         }
         return false;
     },
