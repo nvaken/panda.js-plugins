@@ -13267,8 +13267,8 @@ game.DebugDraw.inject({
         var sprite = new game.Graphics();
         this.drawBodySprite(sprite, body);
 
-        sprite.position.x = body.position[0] * game.scene.world.ratio;
-        sprite.position.y = body.position[1] * game.scene.world.ratio;
+        sprite.position.x = body.position[0] * body.world.ratio;
+        sprite.position.y = body.position[1] * body.world.ratio;
         sprite.target = body;
         sprite.alpha = game.DebugDraw.bodyAlpha;
         this.bodyContainer.addChild(sprite);
@@ -13288,10 +13288,10 @@ game.DebugDraw.inject({
             childSprite.pivot = new game.PIXI.Point(body.shapes[i].width, body.shapes[i].height);
             if(body.shapes[i] instanceof game.Rectangle) {
                 childSprite.drawRect(
-                    (body.shapes[i].width / 2) * game.scene.world.ratio,
-                    (body.shapes[i].height / 2) * game.scene.world.ratio,
-                    body.shapes[i].width * game.scene.world.ratio,
-                    body.shapes[i].height * game.scene.world.ratio
+                    (body.shapes[i].width / 2) * body.world.ratio,
+                    (body.shapes[i].height / 2) * body.world.ratio,
+                    body.shapes[i].width * body.world.ratio,
+                    body.shapes[i].height * body.world.ratio
                 );
             }
             else if (body.shapes[i] instanceof game.Convex) {
@@ -13302,7 +13302,7 @@ game.DebugDraw.inject({
                 }
             }
             if(body.shapes[i] instanceof game.Circle) {
-                childSprite.drawCircle(0, 0, body.shapes[i].radius * game.scene.world.ratio);
+                childSprite.drawCircle(0, 0, body.shapes[i].radius * body.world.ratio);
             }
             sprite.addChild(childSprite);
         }
@@ -13315,20 +13315,20 @@ game.DebugDraw.inject({
 
             if(body.radius !== 0) {
                 // Circle
-                if (body.radius > 0 && body.radius !== body.target.shapes[0].radius * game.scene.world.ratio) {
+                if (body.radius > 0 && body.radius !== body.target.shapes[0].radius * body.world.ratio) {
                     this.drawBodybody(body, body.target);
                 }
             } else {
                 // Rectangle
-                if (body.width !== body.target.shapes[0].width * game.scene.world.ratio ||
-                    body.height !== body.target.shapes[0].height * game.scene.world.ratio) {
+                if (body.width !== body.target.shapes[0].width * body.world.ratio ||
+                    body.height !== body.target.shapes[0].height * body.world.ratio) {
                     this.drawBodybody(body, body.target);
                 }
             }
 
             body.rotation = body.target.angle;
-            body.position.x = body.target.position[0] * game.scene.world.ratio + game.scene.stage.position.x;
-            body.position.y = body.target.position[1] * game.scene.world.ratio + game.scene.stage.position.y;
+            body.position.x = body.target.position[0] * body.target.world.ratio + body.stage.position.x;
+            body.position.y = body.target.position[1] * body.target.world.ratio + body.stage.position.y;
             if (!body.target.world) this.bodyContainer.removeChild(body);
         }
     }
